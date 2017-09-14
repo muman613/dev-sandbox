@@ -1,0 +1,16 @@
+{
+  "name": "canvas2",
+  "version": "1.0.0",
+  "description": "2nd canvas demo",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && ./node_modules/.bin/webpack   main.js bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Uman",
+  "license": "ISC",
+  "dependencies": {
+    "fs-web": "^1.0.1",
+    "webpack": "^3.5.6"
+  }
+}

@@ -1,0 +1,42 @@
+[
+    {
+        "y": 106,
+        "h": 100,
+        "title": "MBUS Regs",
+        "x": 100,
+        "color": "orange",
+        "w": 200
+    },
+    {
+        "w": 800,
+        "title": "MC Regs",
+        "x": 96,
+        "y": 417,
+        "h": 400,
+        "color": "purple"
+    },
+    {
+        "title": "MISC Pane",
+        "x": 845,
+        "h": 120,
+        "y": 252,
+        "color": "blue",
+        "w": 240,
+        "content": [
+            "HEVC_Reg0 : 0x12345678 HEVC_Reg1 : 0x12345678",
+            "HEVC_Reg2 : 0x12345678"
+        ]
+    },
+    {
+        "w": 240,
+        "color": "darkgreen",
+        "h": 120,
+        "y": 125,
+        "x": 404,
+        "title": "DOPE Pane",
+        "content": [
+            "Debug Probe : %grw(VDec_DebugProbe0)",
+            "              %grw(VDec_DebugProbe1)"
+        ]
+    }
+]
