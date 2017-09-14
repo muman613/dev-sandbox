@@ -1,0 +1,15 @@
+{
+    "name": "test-browserify",
+    "version": "1.0.0",
+    "description": "Test browserify",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Michael Uman",
+    "license": "ISC",
+    "dependencies": {
+        "browserify": "^14.4.0",
+        "ramda": "^0.24.1"
+    }
+}
