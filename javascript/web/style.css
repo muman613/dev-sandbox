@@ -1,0 +1,48 @@
+    :root {
+        --panel: #f0f0f0;
+    }
+    body {
+        background: darkgray;
+    }
+
+    #con-status {
+        font-size: 14pt;
+    }
+    
+    #con-parms {
+        background: var(--panel);
+        padding: 24px;
+        font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        border-radius: 12px;
+        box-shadow: 4px 4px 2px 1px #222;
+    }
+
+    #con-read {
+        padding: 24px;
+        background: var(--panel);
+        border-radius: 12px;
+        box-shadow: 4px 4px 2px 1px #222;
+    }
+    #con-write {
+        padding: 24px;
+        background: var(--panel);
+        border-radius: 12px;
+        box-shadow: 4px 4px 2px 1px #222;
+    }
+
+    #symbols {
+        border-radius: 12px;
+        box-shadow: 4px 4px 2px 1px #222;
+        padding: 24px;
+        background: var(--panel);
+    }
+    #symbol-table > table td {
+        font-family: 'mono';
+        font-style: 'italic';
+        font-size: 10pt;
+        border: 1px solid black;
+        width: 100%;
+    }
+    input {
+        font-family: "mono";
+    }

@@ -1,0 +1,25 @@
+{
+  "name": "electron2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "@types/core-js": "^0.9.43",
+    "@types/node": "^8.0.26",
+    "argparse": "^1.0.9",
+    "electron-store": "^1.2.0",
+    "jquery": "^3.2.1",
+    "jquery-autocomplete": "^1.2.1",
+    "jquery-ui": "^1.12.1",
+    "printf": "^0.2.5",
+    "promisify-node": "^0.4.0",
+    "webpack": "^3.5.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc -W"
+  },
+  "author": "Michael A. Uman",
+  "license": "ISC"
+}
