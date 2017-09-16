@@ -1,0 +1,19 @@
+{
+  "name": "config-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "smpProbe",
+    "config"
+  ],
+  "author": "Michael A. Uman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.4",
+    "xml2js": "^0.4.19"
+  }
+}
