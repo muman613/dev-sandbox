@@ -9,6 +9,7 @@
   "author": "Michael Uman",
   "license": "ISC",
   "dependencies": {
+    "js-beautify": "^1.6.14",
     "jsdom": "^11.2.0"
   }
 }
