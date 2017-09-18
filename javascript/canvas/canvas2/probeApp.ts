@@ -105,6 +105,7 @@ export class probeApp {
                 break;
 
             default:
+                console.log(e);
                 break;
         }
     }
@@ -113,14 +114,15 @@ export class probeApp {
         console.log("onTimer()");
         if (this.trackMove == false) {
             this.drawCanvas();
-            this.drawTimestamp();
+//            this.drawTimestamp();
         }
     }
 
     /** Draw the timestamp into the canvas */
     private drawTimestamp() {
         let ts = new Date().toLocaleTimeString();
-        this.ctx.beginPath();
+        this.ctx.fillStyle  = "black";
+        this.ctx.font       = "10pt mono";
         this.ctx.fillText(ts, 2, 12);
     }
 
@@ -227,6 +229,8 @@ export class probeApp {
                 this.drawPane(pane);
             });
         }
+
+        this.drawTimestamp();
     }
 
     /** Determine which pane the point is in */
