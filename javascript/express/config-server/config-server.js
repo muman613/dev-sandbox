@@ -13,12 +13,34 @@ const pug           = require('pug');
 
 /** Some application constants */
 const homeDir       = os.homedir();
-const configPath    = homeDir + "/.smpProbe/config/";
+const configPath    = getConfigfilePath();
 const serverPort    = 3000;
 let   configsLoaded = false;
 
 /** Get an XML parser */
 let   xmlParser     = new xml2js.Parser();
+
+function getConfigfilePath() {
+    let configFilePath = undefined;
+
+    let platform = os.platform();
+    console.log("running on platform " + platform);
+    switch (platform) {
+        case "win32":
+            configFilePath = homeDir + "\\.smpProbe\\config\\";
+            break;
+
+        case "linux":
+            configFilePath = homeDir + "/.smpProbe/config/";
+            break;
+
+        default:
+            console.error("Unsupported platform!");
+            break;
+    }
+
+    return configFilePath;
+}
 
 function getConfigInfo(path, name) {
     let configName = path + name;
@@ -70,9 +92,9 @@ function getConfigInfo(path, name) {
 }
 
 /** Get config file array */
-function getConfigFiles() {
+function getConfigFiles(path) {
     return new Promise((resolve, reject) => {
-        fs.readdir(configPath, (err, files) => {
+        fs.readdir(path, (err, files) => {
             if (err) {
 //              console.log(err);
                 reject(err);
@@ -139,7 +161,8 @@ let configFileArray = [];
 app.set('views', __dirname + "/templates/");
 app.set('view engine', 'pug');
 
-getConfigFiles().then((files) => {
+console.log("Searching for config files @ " + configPath);
+getConfigFiles(configPath).then((files) => {
 //  console.log(files);
     configFileArray = files;
     configsLoaded   = true;

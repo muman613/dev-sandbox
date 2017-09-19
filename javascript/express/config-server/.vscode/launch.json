@@ -9,7 +9,12 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${file}",
-            "runtimeExecutable": "nodejs",
+            "linux": {
+                "runtimeExecutable": "nodejs",
+            },
+            "windows": {
+                "runtimeExecutable": "node"
+            },
             "stopOnEntry": true
         }
     ]
