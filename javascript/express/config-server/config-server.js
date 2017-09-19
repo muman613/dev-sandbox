@@ -9,6 +9,7 @@ const express       = require('express');
 const fs            = require('fs');
 const xml2js        = require('xml2js');
 const os            = require('os');
+const pug           = require('pug');
 
 /** Some application constants */
 const homeDir       = os.homedir();
@@ -135,8 +136,11 @@ function getIncludeFileArray() {
 let app = express();
 let configFileArray = [];
 
+app.set('views', __dirname + "/templates/");
+app.set('view engine', 'pug');
+
 getConfigFiles().then((files) => {
-    console.log(files);
+//  console.log(files);
     configFileArray = files;
     configsLoaded   = true;
 }).catch((reason) => {
@@ -187,14 +191,28 @@ app.use("/config/get/:file", (req, res) => {
 
 app.use('/config', (req, res) => {
     if (configsLoaded) {
-        res.send(configFileArray);
+//        res.send(configFileArray);
+        let URL = "http://" + req.headers.host;
+
+        res.render('configs', {
+            "configCount": getConfigFileArray().length,
+            "includeCount": getIncludeFileArray().length,
+            "configURL": URL + "/config/files",
+            "includeURL": URL + "/config/includes",
+            "osHostName": os.hostname(),
+            "osArch": os.arch()
+        });
     } else {
         res.send("No configuratons found!");
     }
 });
 
 app.use('/', (req, res) => {
-    res.send("OK");
+    //res.send("OK");
+    res.render('template', {
+        "title": "Configuration Server",
+        "message": "Welcome to the configuration server!"
+     });
 });
 
 
