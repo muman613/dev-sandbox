@@ -10,6 +10,7 @@ const fs            = require('fs');
 const xml2js        = require('xml2js');
 const os            = require('os');
 const pug           = require('pug');
+const cors          = require('cors');
 
 /** Some application constants */
 const homeDir       = os.homedir();
@@ -161,11 +162,19 @@ let configFileArray = [];
 app.set('views', __dirname + "/templates/");
 app.set('view engine', 'pug');
 
+app.use(cors());
+
 console.log("Searching for config files @ " + configPath);
 getConfigFiles(configPath).then((files) => {
 //  console.log(files);
     configFileArray = files;
     configsLoaded   = true;
+
+    /** Set up a filesystem watch on the configuration directory */
+    fs.watch(configPath, "utf8", (event, filename) => {
+        console.log("event : " + event + " filename : " + filename);
+    });
+    
 }).catch((reason) => {
     switch (reason.code) {
         case 'ENOENT':
@@ -176,6 +185,7 @@ getConfigFiles(configPath).then((files) => {
             break;
     }
 });
+
 
 app.use("/config/files", (req, res) => {
     if (configsLoaded) {
