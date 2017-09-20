@@ -10,7 +10,7 @@ window.onload = function (e) {
     let divElement = document.getElementById('output');
 
     console.log("OK");
-    divElement.innerHTML = "This is a test";
+    divElement.innerHTML = "<center><h3>Loading configuration files</h3></center>";
 
     document.getElementById('refreshButton').onclick = function (e) {
         console.log("Refresh Button clicked!");
