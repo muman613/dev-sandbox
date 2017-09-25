@@ -14,8 +14,8 @@
             },
             "windows": {
                 "runtimeExecutable": "node"
-            },
-            "stopOnEntry": true
+            }
+            //"stopOnEntry": true
         }
     ]
 }

@@ -157,6 +157,9 @@ function getIncludeFileArray() {
 }
 
 let app = express();
+let io = undefined;
+
+
 let configFileArray = [];
 
 app.set('views', __dirname + "/templates/");
@@ -174,7 +177,7 @@ getConfigFiles(configPath).then((files) => {
     fs.watch(configPath, "utf8", (event, filename) => {
         console.log("event : " + event + " filename : " + filename);
     });
-    
+
 }).catch((reason) => {
     switch (reason.code) {
         case 'ENOENT':
@@ -240,17 +243,41 @@ app.use('/config', (req, res) => {
     }
 });
 
+app.use(express.static(__dirname + "/public"));
 app.use('/', (req, res) => {
     //res.send("OK");
-    res.render('template', {
-        "title": "Configuration Server",
-        "message": "Welcome to the configuration server!"
-     });
+    // res.render('template', {
+    //     "title": "Configuration Server",
+    //     "message": "Welcome to the configuration server!"
+    //  });
+    res.sendFile(__dirname + "/public/index.html");
 });
 
 
 let server = app.listen(serverPort, function () {
     console.log("HTTP Server waiting on port " + server.address().port);
+    /** Attach socket.io handler */
+    io = require('socket.io')(server);
+    console.log(io);
+
+    io.on('connection', function (client) {
+        console.log("Client connected...");
+
+        client.emit('message', "Hello client");
+
+        client.on('send', function (data) {
+            console.log("received send packet!");
+        });
+
+        client.on('disconnect', function () {
+            console.log("client disconnected!");
+        });
+    });
+
+    // io.on('disconnect', function () {
+    //     console.log("client disconnected!");
+    // });
+
 }).on('error', (err) => {
     switch (err.code) {
         case 'EADDRINUSE':
