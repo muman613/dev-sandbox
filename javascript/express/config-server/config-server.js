@@ -267,6 +267,8 @@ let server = app.listen(serverPort, function () {
 
         client.on('send', function (data) {
             console.log("received send packet!");
+            let results = [ 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef ];
+            client.emit("response", results);
         });
 
         client.on('disconnect', function () {

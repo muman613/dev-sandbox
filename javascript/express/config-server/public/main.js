@@ -19,6 +19,10 @@ function onConnectClick() {
 //      alert(data);
         messagesDiv.innerHTML += data + '<br>';
     });
+
+    socket.on('response', function (data) {
+        console.log("got response : " + data);
+    });
 }
 
 function onSendClick() {
