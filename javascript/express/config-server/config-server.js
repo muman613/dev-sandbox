@@ -11,6 +11,11 @@ const xml2js        = require('xml2js');
 const os            = require('os');
 const pug           = require('pug');
 const cors          = require('cors');
+const favicon       = require('serve-favicon');
+
+/** Required routers */
+
+const probeRoute    = require("./routes/proberoute.js");
 
 /** Some application constants */
 const homeDir       = os.homedir();
@@ -168,6 +173,85 @@ app.set('view engine', 'pug');
 
 app.use(cors());
 
+/** Log all requests with this handler */
+app.use((req, res, next) => {
+    console.log("%s %s %s", req.method, req.url, req.path);
+    next();
+});
+
+/** Serve up the favicon for the site... */
+app.use(favicon(__dirname + "/public/favicon.ico"));
+
+app.use("/config/files", (req, res) => {
+    if (configsLoaded) {
+        res.send(getConfigFileArray());
+    } else {
+        res.send("No configuration files found!");
+    }
+});
+
+app.use("/config/includes", (req, res) => {
+    if (configsLoaded) {
+        res.send(getIncludeFileArray());
+    } else {
+        res.send("No configuration files found!");
+    }
+});
+
+/** Get a configuration file. */
+app.use("/config/get/:file", (req, res) => {
+    let fileName = req.params.file;
+    let configIndex = -1;
+
+    for (let x = 0 ; x < configFileArray.length ; x++) {
+        if (configFileArray[x].fileName == fileName) {
+            configIndex = x;
+            break;
+        }
+    }
+    if (configIndex != -1) {
+//      console.log("Getting file " + fileName);
+        let fileBody = fs.readFileSync(configFileArray[configIndex].filePath);
+        res.setHeader("content-type", "text/xml");
+        res.send(fileBody.toString());
+    } else {
+        res.send("Invalid filename\n");
+    }
+});
+
+/** Display config file summary page */
+app.use('/config', (req, res) => {
+    if (configsLoaded) {
+//        res.send(configFileArray);
+        let URL = "http://" + req.headers.host;
+
+        res.render('configs', {
+            "configCount": getConfigFileArray().length,
+            "includeCount": getIncludeFileArray().length,
+            "configURL": URL + "/config/files",
+            "includeURL": URL + "/config/includes",
+            "osHostName": os.hostname(),
+            "osArch": os.arch()
+        });
+    } else {
+        res.send("No configuratons found!");
+    }
+});
+
+/** Add router to probe app */
+app.use('/probe', probeRoute);
+
+app.use(express.static(__dirname + "/public"));
+app.use('/', (req, res) => {
+    //res.send("OK");
+    // res.render('template', {
+    //     "title": "Configuration Server",
+    //     "message": "Welcome to the configuration server!"
+    //  });
+    res.sendFile(__dirname + "/public/index.html");
+});
+
+
 console.log("Searching for config files @ " + configPath);
 getConfigFiles(configPath).then((files) => {
 //  console.log(files);
@@ -189,76 +273,6 @@ getConfigFiles(configPath).then((files) => {
             break;
     }
 });
-
-/** Log all requests with this handler */
-app.use((req, res, next) => {
-    console.log("%s %s %s", req.method, req.url, req.path);
-    next();
-});
-
-app.use("/config/files", (req, res) => {
-    if (configsLoaded) {
-        res.send(getConfigFileArray());
-    } else {
-        res.send("No configuration files found!");
-    }
-});
-app.use("/config/includes", (req, res) => {
-    if (configsLoaded) {
-        res.send(getIncludeFileArray());
-    } else {
-        res.send("No configuration files found!");
-    }
-});
-
-app.use("/config/get/:file", (req, res) => {
-    let fileName = req.params.file;
-    let configIndex = -1;
-
-    for (let x = 0 ; x < configFileArray.length ; x++) {
-        if (configFileArray[x].fileName == fileName) {
-            configIndex = x;
-            break;
-        }
-    }
-    if (configIndex != -1) {
-//      console.log("Getting file " + fileName);
-        let fileBody = fs.readFileSync(configFileArray[configIndex].filePath);
-        res.setHeader("content-type", "text/xml");
-        res.send(fileBody.toString());
-    } else {
-        res.send("Invalid filename\n");
-    }
-});
-
-app.use('/config', (req, res) => {
-    if (configsLoaded) {
-//        res.send(configFileArray);
-        let URL = "http://" + req.headers.host;
-
-        res.render('configs', {
-            "configCount": getConfigFileArray().length,
-            "includeCount": getIncludeFileArray().length,
-            "configURL": URL + "/config/files",
-            "includeURL": URL + "/config/includes",
-            "osHostName": os.hostname(),
-            "osArch": os.arch()
-        });
-    } else {
-        res.send("No configuratons found!");
-    }
-});
-
-app.use(express.static(__dirname + "/public"));
-app.use('/', (req, res) => {
-    //res.send("OK");
-    // res.render('template', {
-    //     "title": "Configuration Server",
-    //     "message": "Welcome to the configuration server!"
-    //  });
-    res.sendFile(__dirname + "/public/index.html");
-});
-
 
 let server = app.listen(serverPort, function () {
     console.log("HTTP Server waiting on port " + server.address().port);
