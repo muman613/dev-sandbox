@@ -3,3 +3,12 @@
     color: gold;
     padding: 8px;
 }
+
+#parameters {
+    padding: 8px;
+}
+
+td.label {
+    text-align: right;
+    font-weight: bold;
+}

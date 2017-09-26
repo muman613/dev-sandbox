@@ -4,6 +4,8 @@
 
 var socket = undefined;
 let messagesDiv = undefined;
+let remoteEl = undefined;
+let gbusEl = undefined;
 
 
 function onConnectClick() {
@@ -23,6 +25,8 @@ function onConnectClick() {
     socket.on('response', function (data) {
         console.log("got response : " + data);
     });
+
+    document.getElementById('sendButton').disabled = false;
 }
 
 function onSendClick() {
@@ -42,5 +46,6 @@ function onSendClick() {
 
 window.onload = function() {
     messagesDiv = document.getElementById('messages');
-
+    remoteEl = document.getElementById('remote-ip');
+    gbusEl = document.getElementById('gbus-address');
 }

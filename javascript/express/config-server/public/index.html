@@ -15,8 +15,16 @@
     <div id="messages">
 
     </div>
+
+    <div id="parameters">
+        <table>
+            <tr><td class="label">Remote Target : </td><td><input type="text" value="10.10.10.12" id="remote-ip"></td></tr>
+            <tr><td class="label">GBUS Address : </td><td><input type="text" value="0x100000" id="gbus-address"></td></tr>
+        </table>
+    </div>
+
     <button onclick="onConnectClick()">Connect to server</button>
-    <button onclick="onSendClick()">Send packet</button>
+    <button onclick="onSendClick()" id="sendButton" disabled>Send packet</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="main.js"></script>
