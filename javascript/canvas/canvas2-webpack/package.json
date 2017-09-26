@@ -12,5 +12,8 @@
   "dependencies": {
     "fs-web": "^1.0.1",
     "webpack": "^3.5.6"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.31"
   }
 }
