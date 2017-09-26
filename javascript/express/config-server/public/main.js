@@ -33,8 +33,10 @@ function onSendClick() {
     console.log("onSendClick() called!")
 
     if (socket) {
+        let remoteIP = remoteEl.value;
+
         let data = {
-            dest: "10.10.10.12",
+            dest: remoteIP,
             packet: "abcdefg"
         };
 

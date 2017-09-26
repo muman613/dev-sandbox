@@ -190,6 +190,11 @@ getConfigFiles(configPath).then((files) => {
     }
 });
 
+/** Log all requests with this handler */
+app.use((req, res, next) => {
+    console.log("%s %s %s", req.method, req.url, req.path);
+    next();
+});
 
 app.use("/config/files", (req, res) => {
     if (configsLoaded) {
@@ -268,7 +273,10 @@ let server = app.listen(serverPort, function () {
 
         client.on('send', function (data) {
             console.log("received send packet!");
-            let results = [ 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef ];
+            let results = {
+                status: "ok",
+                values: [ 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef ]
+            };
             client.emit("response", results);
         });
 
