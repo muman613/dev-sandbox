@@ -58,7 +58,7 @@ function getConfigInfo(path, name) {
 
         let stats = fs.statSync(configName);
 
-        configObj.modified = stats.mtime;
+        configObj.modified = stats.mtime.toString();
 
         fs.readFile(configName, (err, data) => {
 //            console.log(configName);
@@ -158,6 +158,7 @@ function getIncludeFileArray() {
 
 let app = express();
 let io = undefined;
+let watcher = undefined;
 
 
 let configFileArray = [];
@@ -174,7 +175,7 @@ getConfigFiles(configPath).then((files) => {
     configsLoaded   = true;
 
     /** Set up a filesystem watch on the configuration directory */
-    fs.watch(configPath, "utf8", (event, filename) => {
+    watcher = fs.watch(configPath, "utf8", (event, filename) => {
         console.log("event : " + event + " filename : " + filename);
     });
 
