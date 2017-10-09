@@ -2,24 +2,24 @@
  * main.js
  */
 
-import * as _ from 'lodash';
-
+import * as _ from "lodash";
 
 window.onload = () => {
     console.log("onload");
 
-    let dataDivEl : HTMLElement | null = document.getElementById("data-div");
+    const dataDivEl: HTMLElement | null = document.getElementById("data-div");
 
-    let array = [ 
+    const array = [
             "a",
             "b",
             "c",
-            "d"
+            "d",
         ];
-    
+
     _.forEach(array, (value) => {
         console.log("value = " + value);
-        if (dataDivEl)
+        if (dataDivEl) {
             dataDivEl.innerHTML += value + "<br>";
+        }
     });
-}
+};
