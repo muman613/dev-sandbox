@@ -29,7 +29,7 @@ window.onload = () => {
 
     ReactDOM.render(
         <MuiThemeProvider muiTheme={muiTheme}>
-            <MyComponent />
+            <MyComponent appName="Shit Bricks" />
         </MuiThemeProvider>,
         mainDiv
     );

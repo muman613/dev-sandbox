@@ -6,10 +6,20 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 
 
+interface MyComponentProps {
+    appName: string;
+}
 
-export class MyComponent extends React.Component {
-    constructor() {
-        super();
+interface MyComponentState {
+    appName: string;
+}
+export class MyComponent extends React.Component<any,any> {
+    constructor(props: MyComponentProps) {
+        super(props);
+
+        this.state = {
+             appName: this.props.appName
+        };
     }
 
     handleAppBar() : void {
@@ -23,7 +33,7 @@ export class MyComponent extends React.Component {
     render() {
         return <div>
                 <AppBar
-                    title="My AppBar"
+                    title={this.state.appName}
                     showMenuIconButton={false}
                     onTitleTouchTap={this.handleAppBar}
                 />
