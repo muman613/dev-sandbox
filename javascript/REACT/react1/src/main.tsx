@@ -18,6 +18,8 @@ import AppBar from 'material-ui/AppBar';
 
 import { MyComponent } from "./mycomponent";
 
+const appName = "Video Analyzer";
+
 console.log("main.tsx");
 
 window.onload = () => {
@@ -29,7 +31,7 @@ window.onload = () => {
 
     ReactDOM.render(
         <MuiThemeProvider muiTheme={muiTheme}>
-            <MyComponent appName="Shit Bricks" />
+            <MyComponent appName={appName}/>
         </MuiThemeProvider>,
         mainDiv
     );

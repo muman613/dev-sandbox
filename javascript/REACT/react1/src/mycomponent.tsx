@@ -3,8 +3,13 @@ import * as ReactDOM from "react-dom";
 
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import Divider from 'material-ui/Divider';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 
+import Files from 'react-files';
+import { MyFileSelector } from "./MyFileSelector";
+import { FileSelector } from "./FileSelector";
 
 interface MyComponentProps {
     appName: string;
@@ -12,13 +17,17 @@ interface MyComponentProps {
 
 interface MyComponentState {
     appName: string;
+    srcFile: string;
 }
-export class MyComponent extends React.Component<any,any> {
+export class MyComponent extends React.Component<MyComponentProps,MyComponentState> {
+//    srcFile: string;
+
     constructor(props: MyComponentProps) {
         super(props);
 
         this.state = {
-             appName: this.props.appName
+             appName: this.props.appName,
+             srcFile: ''
         };
     }
 
@@ -27,7 +36,16 @@ export class MyComponent extends React.Component<any,any> {
     }
 
     handleOkButton(event : object) : void {
-        console.log("handleOkButton() " + event);
+        console.log("handleOkButton()");
+        alert("User hit OK button");
+    }
+
+    fileChanged(selectedFiles: any) {
+        if (selectedFiles.length > 0) {
+            console.log(selectedFiles);
+//          alert("File changed");
+            this.setState( { srcFile: selectedFiles[0].path });
+        }
     }
 
     render() {
@@ -40,8 +58,8 @@ export class MyComponent extends React.Component<any,any> {
                 <Table>
                     <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
                         <TableRow>
-                            <TableHeaderColumn>Column 1</TableHeaderColumn>
-                            <TableHeaderColumn>Column 1</TableHeaderColumn>
+                            <TableHeaderColumn>Abbreviation</TableHeaderColumn>
+                            <TableHeaderColumn>Description</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody displayRowCheckbox={false}>
@@ -55,11 +73,25 @@ export class MyComponent extends React.Component<any,any> {
                         </TableRow>
                     </TableBody>
                 </Table>
-                <RaisedButton
-                    label="OK"
-                    style={ { margin : 12 } }
-                    onClick={this.handleOkButton}
+                <Divider />
+                <MyFileSelector
+                    onChange={this.fileChanged.bind(this)}
                 />
+                <Divider />
+                <FileSelector
+                    label="Select Microcode file :"
+                    buttonLabel="OK"
+                    onChange={this.fileChanged.bind(this)}
+                />
+                <Divider />
+                <Files
+                    multiple={false}
+                    accepts={ [ 'text/plain' ] }
+                    className="fileSelector"
+                    onChange={this.fileChanged.bind(this)}
+                    clickable={true}>
+                    Drop or select file
+                </Files>
         </div>
     }
 }

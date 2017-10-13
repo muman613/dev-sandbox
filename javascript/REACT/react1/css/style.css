@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+body {
+    background-color: #222222;
+    min-height: 100%;
+}
+
+.fileSelector {
+    padding: 12px;
+    color: white;
+    width: 100%;
+}
+
+.file-selector {
+    padding: 12px;
+    color: white;
+    width: 100%;
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+}
