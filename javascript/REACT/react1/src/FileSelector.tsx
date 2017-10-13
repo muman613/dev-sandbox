@@ -53,7 +53,11 @@ export class FileSelector extends React.Component<FileSelectorProps,any> {
         console.log("handle browse!");
         dialog.showOpenDialog({
             title: "Select File",
-            properties: [ "openFile" ]
+            properties: [ "openFile" ],
+            filters: [
+                { name: "BIN Files", extensions: [ 'bin' ]},
+                { name: "All Files", extensions: [ "*" ]}
+            ]
         }, (filenames : string[]) => {
             console.log(filenames);
             this.setState( { fullPath: filenames[0]} );

@@ -42,9 +42,12 @@ export class MyComponent extends React.Component<MyComponentProps,MyComponentSta
 
     fileChanged(selectedFiles: any) {
         if (selectedFiles.length > 0) {
-            console.log(selectedFiles);
-//          alert("File changed");
-            this.setState( { srcFile: selectedFiles[0].path });
+            let filePath = selectedFiles[0];
+
+            console.log(filePath);
+            alert("File changed " + filePath);
+
+            this.setState( { srcFile: filePath });
         }
     }
 
