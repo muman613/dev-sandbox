@@ -11,6 +11,12 @@
             "name": "Launch Program",
             "stopOnEntry": true,
             "program": "${workspaceFolder}\\server.js"
+        },
+        { "type": "node",
+          "request":"launch",
+          "name": "Launch test",
+          "stopOnEntry":true,
+          "program": "${workspaceFolder}\\test_getpath.js"
         }
     ]
 }
