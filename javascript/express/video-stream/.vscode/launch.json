@@ -10,13 +10,27 @@
             "request": "launch",
             "name": "Launch Program",
             "stopOnEntry": true,
-            "program": "${workspaceFolder}\\server.js"
+            "windows": {
+                "program": "${workspaceFolder}\\server.js"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/server.js"
+            }
         },
         { "type": "node",
           "request":"launch",
           "name": "Launch test",
           "stopOnEntry":true,
-          "program": "${workspaceFolder}\\test_getpath.js"
+          "windows": {
+            "program": "${workspaceFolder}\\test_getpath.js"
+          },
+          "linux": {
+            "program": "${workspaceFolder}/test_getpath.js",
+            "args": [
+                "-p"
+                "/usr/share/backgrounds/"
+            ]
+          }
         }
     ]
 }

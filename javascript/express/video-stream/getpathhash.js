@@ -12,9 +12,9 @@ const debug = false;
 let selectFilePattern = new Array();
 
 /**
- * 
- * @param {string} file 
- * @param {stats} stat 
+ *
+ * @param {string} file
+ * @param {stats} stat
  */
 function ignoreFile(file, stat) {
     let extName = path.extname(file)
@@ -41,8 +41,8 @@ function ignoreFile(file, stat) {
 }
 
 /**
- * 
- * @param {string} path 
+ *
+ * @param {string} path
  * @returns {promise}
  */
 function getPathHash(pathToSearch, pattern) {
@@ -55,31 +55,38 @@ function getPathHash(pathToSearch, pattern) {
         console.log("getPathHash(" + absPath + ")")
 
         recursive(absPath, [ ignoreFile ], (err, files) => {
-            let hashMap = {}
-            //console.log("Got files!")
-            files.forEach((fullpath) => {
-                // let fullpath = path.format( {
-                //     dir: absPath,
-                //     base: file
-                // })
+            if (err) {
+                if (debug == true) {
+                    console.log(err)
+                }
+                reject(err)
+            } else {
+                let hashMap = {}
+                //console.log("Got files!")
+                files.forEach((fullpath) => {
+                    // let fullpath = path.format( {
+                    //     dir: absPath,
+                    //     base: file
+                    // })
 
-                let status   = fs.statSync(fullpath)
+                    let status   = fs.statSync(fullpath)
 
-                // if (status.isFile()) {
-                    let pathHash = md5(fullpath)
+                    // if (status.isFile()) {
+                        let pathHash = md5(fullpath)
 
-                    if (debug == true) {
-                        console.log(pathHash + " : " + fullpath)
-                    }
+                        if (debug == true) {
+                            console.log(pathHash + " : " + fullpath)
+                        }
 
-                    hashMap[pathHash] = { 
-                        fullPath: fullpath, 
-                        fileName: path.basename(fullpath),
-                        fileSize: status.size
-                    };
-//                }
-            })
-            resolve(hashMap)
+                        hashMap[pathHash] = {
+                            fullPath: fullpath,
+                            fileName: path.basename(fullpath),
+                            fileSize: status.size
+                        };
+    //                }
+                })
+                resolve(hashMap)
+            }
         })
     })
 }
