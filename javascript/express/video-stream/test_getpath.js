@@ -3,7 +3,8 @@
 const getPathHash = require('./getpathhash');
 
 
-let pathHashPromise = getPathHash("C:\\Users\\muman\\OneDrive\\Pictures\\");
+let pathHashPromise = getPathHash("C:\\Users\\muman\\OneDrive\\Pictures\\",
+                                  [ ".jpg", ".mp4" ]);
 
 pathHashPromise.then((pathHash) => {
     console.log("promise filled!")

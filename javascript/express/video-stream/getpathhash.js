@@ -1,14 +1,15 @@
+
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const md5    = require('./md5');
+const fs        = require('fs');
+const path      = require('path');
+const crypto    = require('crypto');
+const md5       = require('./md5');
 const recursive = require('recursive-readdir');
 
 const debug = false;
 
-//let pathBase = "";
+let selectFilePattern = new Array();
 
 /**
  * 
@@ -16,17 +17,27 @@ const debug = false;
  * @param {stats} stat 
  */
 function ignoreFile(file, stat) {
-    let extName = path.extname(file);
+    let extName = path.extname(file)
 
     if (stat.isDirectory()) {
-        return false;
+        return false
     }
 
-    if (extName == ".jpg") {
-        return false;
+    for (let i = 0 ; i < selectFilePattern.length ; i++) {
+        if (selectFilePattern[i] == extName) {
+            return false;
+        }
     }
+    // selectFilePattern.forEach((pat) => {
+    //     if (pat == extName) {
+    //         return false
+    //     }
+    // })
+    // if (extName == ".jpg") {
+    //     return false;
+    // }
 
-    return true;
+    return true
 }
 
 /**
@@ -34,7 +45,9 @@ function ignoreFile(file, stat) {
  * @param {string} path 
  * @returns {promise}
  */
-function getPathHash(pathToSearch) {
+function getPathHash(pathToSearch, pattern) {
+    selectFilePattern = pattern;
+
     return new Promise((resolve, reject) => {
         let absPath = path.resolve(pathToSearch)
 //      pathBase = absPath;
