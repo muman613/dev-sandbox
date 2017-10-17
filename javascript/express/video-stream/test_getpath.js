@@ -15,14 +15,16 @@ program
 
 let scanPath = program.path // "C:\\Users\\muman\\OneDrive\\Pictures\\"
 
+/** If user did not specify input path then abort... */
 if (scanPath == undefined) {
     program.help()
     process.exit(-1)
 }
-let pathHashPromise = getPathHash(scanPath,
-                                  [ ".jpg", ".png", ".mp4" ])
 
-pathHashPromise.then((pathHash) => {
+getPathHash(
+    scanPath,
+    [ ".jpg", ".png", ".mp4" ]
+).then((pathHash) => {
     mediaPathHash(pathHash).then((pathHash) => {
         Object.keys(pathHash).forEach((hash) =>{
             console.log("Hash " + hash + " -> " + pathHash[hash].geometry + " " + pathHash[hash].fullPath)
