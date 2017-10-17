@@ -28,14 +28,6 @@ function ignoreFile(file, stat) {
             return false;
         }
     }
-    // selectFilePattern.forEach((pat) => {
-    //     if (pat == extName) {
-    //         return false
-    //     }
-    // })
-    // if (extName == ".jpg") {
-    //     return false;
-    // }
 
     return true
 }
@@ -55,12 +47,14 @@ function getPathHash(pathToSearch, pattern) {
         console.log("getPathHash(" + absPath + ")")
 
         recursive(absPath, [ ignoreFile ], (err, files) => {
+            /** If error then reject promise */
             if (err) {
                 if (debug == true) {
                     console.log(err)
                 }
                 reject(err)
             } else {
+                files.sort();
                 let hashMap = {}
                 //console.log("Got files!")
                 files.forEach((fullpath) => {
