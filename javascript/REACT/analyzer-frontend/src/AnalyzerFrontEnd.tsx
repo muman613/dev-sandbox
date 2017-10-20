@@ -24,6 +24,9 @@ export class AnalyzerFrontEnd extends React.Component {
         { value: 'one', label: 'One' },
         { value: 'two', label: 'Two' }
       ];
+    state = {
+        value: 1,
+      };
 
     logChange(val : any) {
         console.log("Selected: " + JSON.stringify(val));
@@ -47,6 +50,8 @@ export class AnalyzerFrontEnd extends React.Component {
     onTextChange(event: object, newValue : string) {
         console.log("text = " + newValue);
     }
+
+    handleChange = (event, index, value) => this.setState({value});
 
     constructor(props: any) {
         super();
@@ -78,6 +83,18 @@ export class AnalyzerFrontEnd extends React.Component {
                     hintText="Enter your name"
                     onChange={ this.onTextChange.bind(this) }
                 />
+                <Divider />
+                <SelectField
+                    floatingLabelText="Frequency"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    >
+                    <MenuItem value={1} primaryText="Never" />
+                    <MenuItem value={2} primaryText="Every Night" />
+                    <MenuItem value={3} primaryText="Weeknights" />
+                    <MenuItem value={4} primaryText="Weekends" />
+                    <MenuItem value={5} primaryText="Weekly" />
+                </SelectField>
             </div>
         )
     }
