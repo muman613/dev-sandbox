@@ -10,7 +10,12 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}/dist/main.js",
-            "args": [],
+            "args": [
+                "-p",
+                "/mnt/muman-fw-gitroot/mrua/mrua-171024/ucode_video/video_t5/src/",
+                "-f",
+                "hd.asm"
+            ],
             "env": {
                 "RMCFLAGS": "-DRMCHIP_ID=RMCHIP_ID_SMP8760 -DRMCHIP_REVISION=1 -DRMDX=1 -DEM86XX_MODE=EM86XX_MODEID_STANDALONE -DWITH_XLOADED_UCODE=1 -DWITHOUT_NERO_SPU=1"
             },
