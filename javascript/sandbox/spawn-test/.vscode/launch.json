@@ -14,7 +14,29 @@
                 "-p",
                 "/mnt/muman-fw-gitroot/mrua/mrua-171024/ucode_video/video_t5/src/",
                 "-f",
-                "hd.asm"
+                "hd.asm",
+                "-t",
+                "source"
+            ],
+            "env": {
+                "RMCFLAGS": "-DRMCHIP_ID=RMCHIP_ID_SMP8760 -DRMCHIP_REVISION=1 -DRMDX=1 -DEM86XX_MODE=EM86XX_MODEID_STANDALONE -DWITH_XLOADED_UCODE=1 -DWITHOUT_NERO_SPU=1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch listing command",
+            "program": "${workspaceFolder}/dist/main.js",
+            "args": [
+                "-p",
+                "/mnt/muman-fw-gitroot/mrua/mrua-171024/ucode_video/video_t5/src/",
+                "-f",
+                "video_microcode_UN1.lst",
+                "-t",
+                "listing"
             ],
             "env": {
                 "RMCFLAGS": "-DRMCHIP_ID=RMCHIP_ID_SMP8760 -DRMCHIP_REVISION=1 -DRMDX=1 -DEM86XX_MODE=EM86XX_MODEID_STANDALONE -DWITH_XLOADED_UCODE=1 -DWITHOUT_NERO_SPU=1"
