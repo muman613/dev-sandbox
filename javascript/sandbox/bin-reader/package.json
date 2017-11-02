@@ -1,0 +1,19 @@
+{
+  "name": "bin-reader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test-read.js",
+  "dependencies": {
+    "@types/node": "^8.0.47",
+    "commander": "^2.11.0",
+    "fs-readstream-seek": "^1.1.1",
+    "typescript": "^2.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
