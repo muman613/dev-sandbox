@@ -31,12 +31,12 @@ export class ucodeLine {
     public segType: segmentType
     public source: string
     public file: string
-    public offset: string
+    public offset: number
     public opCodes: string
 
     constructor(ln: number, segName: string,
                 segType: segmentType, fn: string,
-                ofs: string, code: string,
+                ofs: number, code: string,
                 src: string) {
         this.lineNo     = ln
         this.segName    = segName
@@ -126,6 +126,9 @@ export class binLoader {
                 this.rootPath = path.dirname(fileName)
 
                 obj.files['test'] = new ucodeFile('/tmp/file')
+                obj.files['test'].lines.push(new ucodeLine(1, 'name',
+                                             segmentType.code, '/tmp/fn',
+                                             0x200, '0202', 'asdasdad'))
 
                 resolve(obj)
             } else {
