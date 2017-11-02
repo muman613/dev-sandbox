@@ -5,7 +5,7 @@
 // const { exec }  = require('child_process')
 
 import * as fs from 'fs'
-import { sourceLoader } from './sourceloader'
+import { sourceLoader, ucodeObject } from './sourceloader'
 import { dumpSourceToFile } from './utilitybox'
 
 const program = require('commander')
@@ -28,10 +28,10 @@ if ((!program.path) || (!program.file)) {
 
 const rmcflags: string = process.env.RMCFLAGS as string
 
-const mruaPath      = program.path
-const sourceFile    = program.file
-const outFile       = program.out
-const outType       = program.type
+const mruaPath: string      = program.path
+const sourceFile: string    = program.file
+const outFile: string       = program.out
+const outType: string       = program.type
 
 const loader = new sourceLoader(rmcflags, mruaPath)
 
@@ -57,9 +57,10 @@ if (outType === 'source') {
             console.log(err)
         })
 } else if (outType === 'listing') {
-    loader.loadListingFile(sourceFile).then((lines) => {
-        loader.parseListingFile(lines).then((obj) => {
-            console.log(obj)
+    loader.loadListingFile(sourceFile).then((obj: ucodeObject) => {
+//        console.log(obj)
+        loader.parseListingFile(obj).then((obj2: ucodeObject) => {
+            console.log("Done")
         })
     }).catch((err) => {
         console.log(err);
@@ -68,6 +69,6 @@ if (outType === 'source') {
     console.log("Unknown type " + outType)
 }
 
-
 // cpp $RMCFLAGS -D__ASSEMBLY__=1  -I ../../../base/ -I ../../../hwdep_hwlib  main.asm
-// cpp $RMCFLAGS -D__ASSEMBLY__=1 -DSX_INTERFACE=1 -DVDEC_VERSION=19 -DRMBUILD_USE_HWLIB_V2=1 -I ../../../base/ -I ../../../hwdep_hwlib  -fdirectives-only hd.asm
+// cpp $RMCFLAGS -D__ASSEMBLY__=1 -DSX_INTERFACE=1 -DVDEC_VERSION=19
+//     -DRMBUILD_USE_HWLIB_V2=1 -I ../../../base/ -I ../../../hwdep_hwlib  -fdirectives-only hd.asm

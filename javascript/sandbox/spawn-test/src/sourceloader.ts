@@ -5,28 +5,59 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as readline from 'readline'
+import { getFullPath }  from './utilitybox'
 const { exec }  = require('child_process')
 
 const useMaxBuffer = 2048 * 1024
 
-enum segType {
+enum segmentType {
     code,
     data,
 }
 
-interface ucodeLine {
-    lineNo: number
-    segName: string
-    segType: segType
+// interface ucodeLine {
+//     lineNo: number
+//     segName: string
+//     segType: segType
 
+// }
+
+/**
+ *
+ *
+ * @export
+ * @class ucodeLine
+ */
+export class ucodeLine {
+    public lineNo: number
+    public segName: string
+    public segType: segmentType
+    public source: string
+    public file: string
+    public offset: string
+    public opCodes: string
+
+    constructor(ln: number, segName: string,
+                segType: segmentType, fn: string,
+                ofs: string, code: string,
+                src: string) {
+        this.lineNo     = ln
+        this.segName    = segName
+        this.segType    = segType
+        this.file       = fn
+        this.offset     = ofs
+        this.opCodes    = code
+        this.source     = src
+    }
 }
-interface ucodeFile {
+
+export interface ucodeFile {
     ucPath: string
-    lines: string[]
+    lines: ucodeLine[]
 }
 
-interface ucodeObject {
-    [key: string] : ucodeFile
+export interface ucodeObject {
+    [key: string]: ucodeFile
 }
 
 /**
@@ -78,7 +109,7 @@ export class sourceLoader {
     //                      console.log(error)
                             reject(error)
                         } else {
-                            let   stringBuffer = stdout.toString().replace(/\/\*.*[\s\S]+\*\//gm, 'XXXX')
+                            const   stringBuffer = stdout.toString().replace(/\/\*.*[\s\S]+\*\//gm, 'XXXX')
 
                             fs.writeFileSync('/tmp/xxx', stringBuffer)
 //                            stringBuffer.replace(/\/\*.*[\s\S]+\*\//gm, '')
@@ -105,19 +136,20 @@ export class sourceLoader {
      */
     public loadSourcecode(sourceFile: string): Promise<string[]> {
         return new Promise((resolve, reject) => {
-            const fullPath: string = path.normalize(path.format({
-                base: sourceFile,
-                dir: this.cwd,
-                ext: 'ignored',
-                name: 'ignored',
-                root: '/ignored',
-            }))
+            // const fullPath: string = path.normalize(path.format({
+            //     base: sourceFile,
+            //     dir: this.cwd,
+            //     ext: 'ignored',
+            //     name: 'ignored',
+            //     root: '/ignored',
+            // }))
+            const fullPath: string = getFullPath(this.cwd, sourceFile)
 
             if (!fs.existsSync(fullPath)) {
                 reject( new Error('File Not Found: ' + fullPath) )
             } else {
                 const sourceBuffer = fs.readFileSync(fullPath, { encoding: "utf-8" })
-                const lines : string[] = sourceBuffer.toString().split('\n')
+                const lines: string[] = sourceBuffer.toString().split('\n')
 
                 resolve(lines)
             }
@@ -125,93 +157,76 @@ export class sourceLoader {
     }
 
     /** Load the microcode listing file */
-    public loadListingFile(listingFile: string) : Promise<string[]> {
+    public loadListingFile(listingFile: string): Promise<ucodeObject> {
         return new Promise((resolve, reject) => {
-            const fullPath: string = path.normalize(path.format({
-                base: listingFile,
-                dir: this.cwd,
-                ext: 'ignored',
-                name: 'ignored',
-                root: '/ignored',
-            }))
+            const fullPath: string = getFullPath(this.cwd, listingFile)
 
             if (!fs.existsSync(fullPath)) {
                 reject( new Error('File Not Found: ' + fullPath) )
             } else {
-                const obj : ucodeObject = {
-                }
+                const obj: ucodeObject = {}
                 const rl = readline.createInterface({
                     input: fs.createReadStream(fullPath),
                 })
-                let currentFile : string = ''
+                let currentFile: string = ''
 
                 rl.on('line', (line) => {
-                    const lineSplit     = line.split('|')
-                    const lineDeco      = lineSplit[0].split(':')
-                    const thisSource    = lineSplit[1]
-                    const thisFile      = lineDeco[0].trim()
-                    const thisLine      = lineDeco[1].trim()
-                    const thisSegment   = lineDeco[2].trim()
-                    const thisSegType   = lineDeco[3].trim()
-                    const thisOffset    = lineDeco[4].trim()
-                    const thisOpcodes   = lineDeco[5].trim()
+                    if (line.length > 0) {
+                        const lineSplit     = line.split('|')
+                        const lineDeco      = lineSplit[0].split(':')
+                        const thisSource    = lineSplit[1]
+                        const thisFile      = lineDeco[0].trim()
+                        const thisLine      = lineDeco[1].trim()
+                        const thisSegment   = lineDeco[2].trim()
+                        const thisSegType   = lineDeco[3].trim()
+                        const thisOffset    = lineDeco[4].trim()
+                        const thisOpcodes   = lineDeco[5].trim()
 
-                    if (currentFile !== thisFile) {
-                        obj[thisFile] = {
-                            lines: [ thisSource ],
-                            ucPath: fullPath,
+                        const newLine = new ucodeLine(thisLine, thisSegment,
+                                                    thisSegType, thisFile,
+                                                    thisOffset, thisOpcodes,
+                                                    thisSource)
+
+                        if (currentFile !== thisFile) {
+                            obj[thisFile] = {
+                                lines: [ newLine ],
+                                ucPath: getFullPath(this.cwd, thisFile),
+                            }
+
+                            console.log('start scanning file : ' + thisFile)
+                            currentFile = thisFile
+                        } else {
+                            obj[thisFile].lines.push(newLine)
                         }
 
-                        console.log('start scanning file : ' + thisFile)
-                        currentFile = thisFile
+//                      console.log('> ' + line);
                     } else {
-                        obj[thisFile].lines.push(thisSource)
+                        console.error("Blank line!")
                     }
-
-                    console.log('> ' + line);
                 })
 
                 rl.on('close', () => {
                     resolve(obj)
                 })
-
-//                const sourceBuffer = fs.readFileSync(fullPath, { encoding: "utf-8" })
-//                const lines : string[] = sourceBuffer.toString().split('\n')
-
-                //resolve(lines)
             }
         })
     }
 
-    public parseListingFile(lines: string[]) : Promise<ucodeObject> {
+    /**
+     * Parse the macros and evaluate...
+     *
+     * @param {ucodeObject} ucode
+     * @returns {Promise<ucodeObject>}
+     * @memberof sourceLoader
+     */
+    public parseListingFile(ucode: ucodeObject): Promise<ucodeObject> {
         return new Promise((resolve, reject) => {
-            let obj : ucodeObject = {
-
-            }
             console.log("parseListingFile()")
 
-            lines.forEach((line) => {
-                console.log('> ' + line);
+            Object.keys(ucode).sort().forEach((key: string) => {
+                console.log("key = " + key + " @ " + ucode[key].ucPath)
             })
-
-            resolve(obj)
+            resolve(ucode)
         })
     }
 }
-
-
-/**
-
-const readline = require('readline');
-const fs = require('fs');
-
-const rl = readline.createInterface({
-  input: fs.createReadStream('sample.txt'),
-  crlfDelay: Infinity
-});
-
-rl.on('line', (line) => {
-  console.log(`Line from file: ${line}`);
-});
-
- */

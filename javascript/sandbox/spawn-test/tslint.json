@@ -10,7 +10,8 @@
         "class-name": false,
         "no-console": false,
         "no-var-requires": false,
-        "interface-name": false
+        "interface-name": false,
+        "max-classes-per-file": false
     },
     "rulesDirectory": []
 }
