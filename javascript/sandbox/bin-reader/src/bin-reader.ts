@@ -1,10 +1,10 @@
 /**
  *
  */
-import { scanSourceFile } from './src/ucodeutils';
+import { scanSourceFile } from './ucodeutils';
 import * as fs from 'fs';
-import { binLoader, segmentType } from './src/binloader'
-import './src/ucodeutils';
+import { binLoader, segmentType } from './binloader'
+import './ucodeutils';
 
 const sprintf = require('sprintf-js').sprintf
 const program = require('commander')
@@ -13,9 +13,9 @@ const stdout = process.stdout
 
 program
     .version('1.0.0')
-    .option('-i, --input <ucode_file>')
-    .option('-o, --output <output_file>')
-    .option('-f, --file <source_file>')
+    .option('-i, --input <ucode_file>',   'specify input file')
+    .option('-o, --output <output_file>', 'specify output file')
+    .option('-f, --file <source_file>',   'specify microcode module')
     .parse(process.argv)
 
 const binFilename = program.input
