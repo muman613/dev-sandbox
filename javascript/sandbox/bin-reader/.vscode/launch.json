@@ -10,9 +10,12 @@
             "name": "Launch bin-reader",
             "program": "${workspaceFolder}/dist/test.js",
             "stopOnEntry": true,
+            "console": "externalTerminal",
             "args": [
                 "-i",
                 "archive/video_microcode_SMP8760_debug.bin"
+                "-f",
+                "decoder/hevc/hevc_init.asm"
             ]
         }
     ]

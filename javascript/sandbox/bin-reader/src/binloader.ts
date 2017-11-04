@@ -6,9 +6,10 @@ import { SIGBREAK } from 'constants';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as stream from 'stream';
-const Readable = require('fs-readstream-seek')
+//const Readable = require('fs-readstream-seek')
 
-enum segmentType {
+export const enum segmentType {
+    none,
     code,
     data,
     dmacode,
@@ -44,10 +45,20 @@ function hashSize(hash: hashType): number {
     return Object.keys(hash).length
 }
 
-function stringToSegtype(str: string): segmentType {
-    let segType = segmentType.code
+/**
+ *  Return the enumerated type given a string.
+ *
+ * @export
+ * @param {string} str
+ * @returns {segmentType}
+ */
+export function stringToSegtype(str: string): segmentType {
+    let segType = segmentType.none
 
     switch (str) {
+        case 'none':
+            segType = segmentType.none
+            break
         case 'code':
             segType = segmentType.code
             break;
@@ -62,10 +73,20 @@ function stringToSegtype(str: string): segmentType {
     return segType
 }
 
-function segtypeToString(type: segmentType): string {
+/**
+ *  Return string representation of segment type enum.
+ *
+ * @export
+ * @param {segmentType} type
+ * @returns {string}
+ */
+export function segtypeToString(type: segmentType): string {
     let segType = ''
 
     switch (type) {
+        case segmentType.none:
+            segType = 'none'
+            break
         case segmentType.code:
             segType = 'code'
             break
@@ -109,7 +130,7 @@ export class ucodeLine {
     }
 }
 /**
- *
+ *  Class encapsulates a source file.
  *
  * @export
  * @class ucodeFile
@@ -143,7 +164,12 @@ export interface symbolHash {
     dm: segmentHash
     dram: segmentHash
 }
-
+/**
+ * Ckass encapsulates the microcode binary file
+ *
+ * @export
+ * @class ucodeObject
+ */
 export class ucodeObject {
     public files: fileHash = {}
     public buildEnv: envHash = {}
@@ -170,9 +196,24 @@ export class ucodeObject {
     }
 
     constructor() {
-//      console.log("ok")
+      console.log("ok")
+    }
+
+    public getFileArray(): string[] {
+        return Object.keys(this.files)
+    }
+
+    public getFileByName(name: string): ucodeFile {
+        let fileObj: ucodeFile = { ucPath: '', lines: [] }
+
+        if (this.files[name]) {
+            fileObj = this.files[name]
+        }
+
+        return fileObj
     }
 }
+
 /**
  *
  *
@@ -232,7 +273,7 @@ export class binLoader {
                 //                              segmentType.code, '/tmp/fn',
                 //                              0x200, '0202', 'asdasdad'))
 
-                const binStream = new Readable(fileName,
+                const binStream = fs.createReadStream(fileName,
                     {
                         highWaterMark: (128 * 1024 * 1024),
                     })
@@ -593,14 +634,14 @@ export class binLoader {
                 const newLine = this.parseLine( line )
                 const fileName = newLine.file
 
-                if (!obj.files[fileName]) {
-                    obj.files[fileName] = new ucodeFile( fileName )
-                    obj.files[fileName].lines.push(newLine)
-                } else {
-                    obj.files[fileName].lines.push(newLine)
+                if (fileName.length > 0) {
+                    if (!obj.files[fileName]) {
+                        obj.files[fileName] = new ucodeFile( fileName )
+                        obj.files[fileName].lines.push(newLine)
+                    } else {
+                        obj.files[fileName].lines.push(newLine)
+                    }
                 }
-
-//              console.log(newLine.file)
             }
         }
 
