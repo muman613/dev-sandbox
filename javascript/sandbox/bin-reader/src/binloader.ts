@@ -6,13 +6,13 @@ import { SIGBREAK } from 'constants';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as stream from 'stream';
-//const Readable = require('fs-readstream-seek')
 
 export const enum segmentType {
     none,
     code,
     data,
     dmacode,
+    dmadata,
 }
 
 interface hashType {
@@ -68,6 +68,9 @@ export function stringToSegtype(str: string): segmentType {
         case 'dmacode':
             segType = segmentType.dmacode
             break;
+        case 'dmadata':
+            segType = segmentType.dmadata
+            break
     }
 
     return segType
@@ -95,6 +98,9 @@ export function segtypeToString(type: segmentType): string {
             break
         case segmentType.dmacode:
             segType = 'dmacode'
+            break
+        case segmentType.dmadata:
+            segType = "dmadata"
             break
     }
 
@@ -129,6 +135,12 @@ export class ucodeLine {
         this.source = src
     }
 }
+
+export interface fileSegObj {
+    type: segmentType
+    name: string
+}
+
 /**
  *  Class encapsulates a source file.
  *
@@ -141,6 +153,37 @@ export class ucodeFile {
 
     constructor(file: string) {
         this.ucPath = file
+    }
+
+    public lineCount(): number {
+        return this.lines.length
+    }
+
+    public getSegmentArray(): fileSegObj[] {
+        const segmentArray: fileSegObj[] = []
+
+        for (const line of this.lines) {
+
+            if (line.segType !== segmentType.none) {
+                const segName = line.segName
+                const segType = line.segType
+
+                let found: boolean = false
+
+                for (const segEntry of segmentArray) {
+                    if (segEntry.name === segName) {
+                        found = true
+                        break
+                    }
+                }
+
+                if (!found) {
+                    segmentArray.push( { type: segType, name: segName } )
+                }
+            }
+        }
+
+        return segmentArray
     }
 }
 
@@ -203,8 +246,8 @@ export class ucodeObject {
         return Object.keys(this.files)
     }
 
-    public getFileByName(name: string): ucodeFile {
-        let fileObj: ucodeFile = { ucPath: '', lines: [] }
+    public getFileByName(name: string): ucodeFile | undefined {
+        let fileObj: ucodeFile | undefined
 
         if (this.files[name]) {
             fileObj = this.files[name]
@@ -603,7 +646,7 @@ export class binLoader {
         return true
     }
 
-    private parseLine(line: string) : ucodeLine {
+    private parseLine(line: string): ucodeLine {
         const lineSplit     = line.split('|')
         const lineDeco      = lineSplit[0].split(':')
         const thisSource    = lineSplit[1]

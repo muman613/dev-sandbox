@@ -8,15 +8,21 @@
             "type": "node",
             "request": "launch",
             "name": "Launch bin-reader",
-            "program": "${workspaceFolder}/dist/test.js",
+            "program": "${workspaceFolder}/dist/bin-reader.js",
             "stopOnEntry": true,
             "console": "externalTerminal",
             "args": [
                 "-i",
                 "archive/video_microcode_SMP8760_debug.bin"
-                "-f",
-                "decoder/hevc/hevc_init.asm"
+                "-o",
+                "output.txt"
             ]
+            // "args": [
+            //     "-i",
+            //     "archive/video_microcode_SMP8760_debug.bin"
+            //     "-f",
+            //     "decoder/hevc/hevc_init.asm"
+            // ]
         }
     ]
 }

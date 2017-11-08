@@ -1,9 +1,9 @@
 /**
  *
  */
-import { scanSourceFile } from './ucodeutils';
 import * as fs from 'fs';
-import { binLoader, segmentType } from './binloader'
+import { binLoader, segmentType, segtypeToString } from './binloader';
+import { fileSegStats, getFileSegStats, scanSourceFile } from './ucodeutils';
 import './ucodeutils';
 
 const sprintf = require('sprintf-js').sprintf
@@ -22,44 +22,65 @@ const binFilename = program.input
 const outFilename = program.output
 const sourceFile  = program.file
 
+// let ofs : any
+
+// if (outFilename) {
+//     ofs = fs.createWriteStream(outFilename)
+// } else {
+//     ofs = stdout
+// }
+
 const loader = new binLoader()
 
-//loader.debug = true
+// loader.debug = true
+let stream: any = null
+
+if (outFilename) {
+    stream = fs.createWriteStream(outFilename)
+} else {
+    stream = process.stdout
+}
 
 console.log("Opening bin file @ " + binFilename)
 
 loader.loadBinFile(binFilename).then((obj) => {
-    // let stream : any = null
-
-    // if (outFilename) {
-    //     stream = fs.createWriteStream(outFilename)
-    // } else {
-    //     stream = process.stdout
-    // }
 
     console.log('microcode loaded!')
-//    dumpSymbols(stream, obj, segmentType.code)
-
-//  console.log(obj.getFileArray())
 
     if (sourceFile) {
         const sourceObj = obj.getFileByName(sourceFile)
-
-        // for (const line of sourceObj.lines) {
-        //     const sLine = sprintf('%03d : %s', line.lineNo, line.source)
-        //     console.log(sLine)
-        // }
-
-        scanSourceFile(sourceObj)
+        if (sourceObj) {
+            scanSourceFile(sourceObj)
+        } else {
+            console.log('Unable to find ' + sourceFile)
+        }
     } else {
         const fileArray = obj.getFileArray()
 
         for (const fileName of fileArray) {
-            console.log(" " + fileName)
+            const lineCount = obj.files[fileName].lineCount()
+            const segArray = obj.files[fileName].getSegmentArray()
+
+            const segStats : fileSegStats = getFileSegStats(obj.files[fileName])
+
+            const output = sprintf("%-60s : %d", fileName, lineCount)
+            stream.write(output + '\n')
+            for (const seg of segArray) {
+                const segDesc = sprintf("    %-50s - %s", seg.name, segtypeToString(seg.type))
+                stream.write(segDesc + '\n')
+            }
         }
     }
-
-    //console.log(loaderSrc)
 }).catch((err) => {
     console.log("Caught exception : " + err)
+})
+
+/**
+ * Handle the exit condition by closing the output file stream..
+ */
+process.on('exit', () => {
+//  console.log('exit')
+    if (outFilename) {
+        stream.end()
+    }
 })
