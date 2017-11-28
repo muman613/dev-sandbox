@@ -10,19 +10,20 @@
             "name": "Launch bin-reader",
             "program": "${workspaceFolder}/dist/bin-reader.js",
             "stopOnEntry": true,
-            "console": "externalTerminal",
-            "args": [
-                "-i",
-                "archive/video_microcode_SMP8760_debug.bin"
-                "-o",
-                "output.txt"
-            ]
+            "console": "internalConsole",
             // "args": [
             //     "-i",
             //     "archive/video_microcode_SMP8760_debug.bin"
-            //     "-f",
-            //     "decoder/hevc/hevc_init.asm"
+            //     "-o",
+            //     "output.txt"
             // ]
+            "args": [
+                "-i",
+                "archive/video_microcode_SMP8760_debug.bin",
+                "-f",
+                "loader.asm"
+//                "decoder/hevc/hevc_init.asm"
+            ]
         }
     ]
 }

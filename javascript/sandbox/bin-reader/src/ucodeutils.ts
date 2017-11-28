@@ -9,6 +9,26 @@ import { segtypeToString, stringToSegtype } from './binloader';
 const sprintf = require('sprintf-js').sprintf
 
 /**
+ *
+ * @param arr1: string[]
+ * @param arr2: string[]
+ */
+
+function compareRegArray(arr1:string[], arr2: string[]): boolean {
+    // tslint:disable-next-line:prefer-for-of
+    for (let a = 0 ; a < arr1.length ; a++) {
+        // tslint:disable-next-line:prefer-for-of
+        for (let b = 0 ; b < arr2.length ; b++) {
+            if (arr1[a] == arr2[b]) {
+                return true
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
  * Dump all symbols in the ucode object
  *
  * @param obj
@@ -114,17 +134,22 @@ function isSaveReg(sourceLine: string): string | undefined {
 
 function getRegisterPairArray(reg: string): string[]|undefined {
     let pairs: string[] | undefined
-    const regex = /(a\d{1,2})(a\d{1,2})?\s/
+    const regex = /(a\d{1,2})(a\d{1,2})?/
 
     const matches = reg.match(regex)
 
     if (matches) {
-        pairs = matches
+        pairs = []
+        if (matches[1]) {
+            pairs.push(matches[1])
+        }
+        if (matches[2]) {
+            pairs.push(matches[2])
+        }
     }
 
     return pairs
 }
-
 
 interface scanContext {
 //  curIndex: number,
@@ -217,16 +242,24 @@ export function scanSourceFile(sourceObj: ucodeFile): boolean {
             context.curSaveReg  = isSaveReg(line.source)
 
             if (context.curLoadReg) {
+                console.log(line.source)
                 console.log("loaded register " + context.curLoadReg + " on line " + line.lineNo + "/" + index)
-
                 const reg = getRegisterPairArray(context.curLoadReg)
                 console.log(reg)
             }
 
             if (context.curSaveReg) {
+                console.log(line.source)
                 console.log("saved register " + context.curSaveReg  + " on line " + line.lineNo + "/" + index)
                 const reg = getRegisterPairArray(context.curSaveReg)
                 console.log(reg)
+
+                if (context.lastLoadReg) {
+                    const lastLoadRegArray = getRegisterPairArray(context.lastLoadReg)
+                    if (compareRegArray(reg as string[], lastLoadRegArray as string[])) {
+                        console.log("WARNING: Pipe-line hazard @ line " + line.lineNo + "!")
+                    }
+                }
             }
 
             console.log(context)
