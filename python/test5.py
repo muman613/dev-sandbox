@@ -3,7 +3,7 @@
 import os
 import argparse
 
-def findFilesInDir(dir, ext=None, sort=True):
+def find_files_in_dir(dir, ext=None, sort=True):
     """Find files in specified directory, can find only files with extensions...
 
     Arguments:
@@ -15,13 +15,14 @@ def findFilesInDir(dir, ext=None, sort=True):
     fileList = []   # create an empty list
 
     for root, dirs, files in os.walk(dir):
-        for file in files:
+        for filename in files:
+            full_name = os.path.join(root, filename)
             if ext is None:
-                fileList.append(file)
+                fileList.append(full_name)
             else:
-                thisExt = os.path.splitext(file)[1]
-                if thisExt in ext:
-                    fileList.append(os.path.join(root, file))
+                this_ext = os.path.splitext(filename)[1]
+                if this_ext in ext:
+                    fileList.append(full_name)
 
     if sort:
         fileList.sort();
@@ -39,7 +40,7 @@ def main():
     """Main entry point
     """
     sourcedir="/home/muman2/Documents"
-    searchExt = None
+    search_ext = None
 
     parser = argparse.ArgumentParser(description='Scan a directory for files')
     parser.add_argument('path')
@@ -51,16 +52,16 @@ def main():
 
     if args.ext:
         # print("User specified extensions")
-        searchExt = [ str(item) for item in args.ext.split(',') ]
+        search_ext = [ str(item) for item in args.ext.split(',') ]
 
     sourcedir = args.path
     # print(searchExt)
 
-    txtFiles = findFilesInDir(sourcedir, searchExt )
+    file_list = find_files_in_dir(sourcedir, search_ext )
     # txtFiles.sort()
 
-    for file in txtFiles:
-        print("Processing file {}...".format(file))
+    for file_name in file_list:
+        print("Processing file {}...".format(file_name))
 
 if __name__ == '__main__':
     main()
