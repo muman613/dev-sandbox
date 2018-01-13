@@ -6,6 +6,7 @@
 
 //#define DEEP_DEBUG
 
+#include "stdafx.h"
 #include <iostream>
 #include <string>
 #include <ctype.h>
@@ -33,7 +34,7 @@ bool stripString(string& str) {
 bool stripString(string& str) {
     size_t strLen = str.length();
 
-    for (int i = 0 ; i < strLen ; ) {
+    for (size_t i = 0 ; i < strLen ; ) {
 #ifdef DEEP_DEBUG
         cout << ">> " << str[i] << endl;
 #endif // DEEP_DEBUG
