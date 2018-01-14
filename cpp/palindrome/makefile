@@ -2,8 +2,14 @@
 
 DBG=-g3
 
-palindrome: palindrome.cpp
-	$(CXX) --std=c++11 $(DBG) -o palindrome palindrome.cpp
+SOURCES=main.cpp palindrome.cpp
+OBJS = $(patsubst %.cpp, %.o, $(notdir $(SOURCES)))
+
+CXXFLAGS=--std=c++11 $(DBG)
+
+palindrome: $(OBJS)
+	$(CXX) $(CXXFLAGS) -o palindrome $(OBJS)
+
 
 clean:
 	rm -f palindrome *.o
