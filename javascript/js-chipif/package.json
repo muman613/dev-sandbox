@@ -1,0 +1,23 @@
+{
+  "name": "js-chipif",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "build-watch": "tsc -W"
+  },
+  "author": "Michael Uman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/core-js": "^0.9.43",
+    "@types/node": "^8.0.26"
+  },
+  "dependencies": {
+    "commander": "^2.11.0",
+    "jquery": "^3.2.1",
+    "node": "^8.3.0",
+    "printf": "^0.2.5"
+  }
+}

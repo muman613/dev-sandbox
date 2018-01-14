@@ -1,0 +1,52 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach",
+            "port": 48431
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch main.js",
+            "program": "${workspaceRoot}/main.js",
+            "args": [
+                "--remote",
+                "10.10.10.15",
+                "--port",
+                "5000",
+                "--addr",
+                "0x100000"
+            ]
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceRoot}/out/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch test.js",
+            "program": "${workspaceRoot}/test.js",
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceRoot}/out/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch parsehdr.js",
+            "program": "${workspaceRoot}/parsehdr.js",
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceRoot}/out/**/*.js"
+            ]
+        }        
+    ]
+}

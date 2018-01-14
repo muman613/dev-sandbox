@@ -1,0 +1,34 @@
+html
+    head
+        title   Configuration Homepage
+        style.
+            body {
+                background-color: lightblue;
+            }
+            table {
+                background-color: lightgray;
+            }
+    body
+        center
+            h1 Statistics
+
+        p Host #{osHostName} Arch #{osArch}
+
+        table(border="1")
+            thead
+                tr
+                    th Category
+                    th Count
+                    th JSON Link
+            tbody
+                tr
+                    td(align='right') Configuration Files :
+                    td #{configCount}
+                    td
+                        a(href=configURL) #{configURL}
+                tr
+                    td(align='right') Include Files :
+                    td #{includeCount}
+                    td
+                        a(href=includeURL) #{includeURL}
+

@@ -1,0 +1,97 @@
+<html>
+
+<head>
+    <title>ChipIF test</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <div id="con-parms">
+        <center>
+            <h3>Connection Information</h3>
+        </center>
+        Remote Host : <input id='ip-addr' value="10.10.10.15"></input> <button id='con-butt'>Submit</button>
+<!--        <div id="con-status">
+            Not connected
+        </div>
+        <div id="con-type">
+            Unknown
+        </div>
+-->
+        <div id="con-info">
+        </div>
+    </div>
+    <br>
+    <div id="con-read">
+        <center>
+            <h3>Read Target</h3>
+        </center>
+        <table>
+            <tr>
+                <td style="text-align:right">GBus Address :</td>
+                <td><input id="gbus-read-address" value="0x100000"></input>
+                </td>
+                <td><button disabled id='read-butt' onclick="onRead()">Read</button></td>
+            </tr>
+            <tr>
+                <td style="text-align:right">Value :</td>
+                <td><input id="gbus-read-value"></input>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <div id="con-write">
+        <center>
+            <h3>Write Target</h3>
+        </center>
+        <table>
+            <tr>
+                <td style="text-align:right">GBus Address :</td>
+                <td><input id="gbus-write-address" value="0x100000"></input>
+                </td>
+                <td><button disabled id='write-butt' onclick="onWrite()">Write</button></td>
+            </tr>
+            <tr>
+                <td style="text-align:right">Value :</td>
+                <td><input id="gbus-write-value"></input>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <div id="symbols">
+        <center><h3>Symbol Table</h3></center>
+        <table width="100%">
+            <tr>
+                <td style="text-align: right">Select the labels header file :</td>
+                <td><input type="file" accept=".h" id="symbol-file" name="header" onclick="onFileClick(this)" onchange="onFileChange(this)" /></td>
+            </tr>
+            <tr>
+                <td style="text-align: right">Header type :</td>
+                <td>
+                    <select id="symbol-type" onchange="onHeaderTypeChange(this)">
+                        <option value="audio">Audio</option>
+                        <option value="demux">Demux</option>
+                        <option selected value="video">Video</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button id="symbol-load" onclick="onSymbolLoad(this)">Load</button></td>
+            </tr>
+        </table>
+        <br>
+        <div id="symbol-table">
+            <b>N/A</b>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>
