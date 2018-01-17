@@ -4,9 +4,29 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Launch sort1",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/sorts/sort1/sort1",
+            "args": [
+                "wordlist"
+            ],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/sorts/sort1",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch palidrome",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/palindrome/palindrome",
