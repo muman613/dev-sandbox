@@ -5,102 +5,24 @@
  * @date            January 17, 2018
  */
 
-#define VERBOSE         1
-
+//#define DUMP_TREE         1       // enable to dump tree to console...
+//#define DISPLAY_UNSORTED  1       // Display the unsorted list...
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 
+#include "wordcollection.h"
+#include "btree.h"
+
 using namespace std;
 
-using  StringList = std::vector<std::string>;
-
-class wordCollection : public StringList {
-    public:
-        wordCollection();
-        wordCollection(const std::string sInputFilename);
-        wordCollection(std::ifstream& ifs);
-        virtual ~wordCollection();
-
-        bool Open(const std::string sInputFilename);
-        bool addWord(const std::string sWord);
-
-    protected:
-        bool readListFromFile(std::ifstream& ifs);
-};
-
-wordCollection::wordCollection() {
-    // ctor
-}
+using stringBtree       = bTree<string, int>;
+using stringBtreeNode   = stringBtree::pNodePtr;
 
 /**
  *
  */
-
-wordCollection::wordCollection(const string sInputFilename) {
-    Open(sInputFilename);
-}
-
-wordCollection::wordCollection(ifstream& ifs) {
-    if (ifs.is_open()) {
-        readListFromFile(ifs);
-    }
-}
-
-wordCollection::~wordCollection() {
-    // dtor
-}
-
-/**
- *  Open word list file and read all words into container...
- */
-
-bool wordCollection::Open(const string sInputFilename) {
-    bool            bRes = false;
-    ifstream        ifs;
-
-    ifs.open(sInputFilename, ifstream::in);
-
-    if (ifs.is_open()) {
-        bRes = readListFromFile(ifs);
-        ifs.close();
-    } else {
-        cerr << "ERROR: Unable to open " << sInputFilename << endl;
-    }
-
-    return bRes;
-}
-
-/**
- * Read a list of words from an input file stream...
- */
-
-bool wordCollection::readListFromFile(ifstream& ifs) {
-    bool bRes = false;
-    string sWord;
-
-    while (getline(ifs, sWord)) {
-#ifdef VERBOSE
-        cout << '[' << sWord << ']' << endl;
-#endif  // VERBOSE
-        push_back(sWord);
-    }
-
-    bRes = true;
-
-#ifdef VERBOSE
-    cout << "Found " << size() << " words in list file..." << endl;
-#endif // VERBOSE
-
-    return bRes;
-}
-
-bool wordCollection::addWord(string sWord) {
-    push_back(sWord);
-    return true;
-}
-
 
 int main(int argc, char const *argv[]) {
     string          sInputListName;
@@ -117,12 +39,43 @@ int main(int argc, char const *argv[]) {
     if (wordList.Open(sInputListName)) {
         size_t n = 0;
 
-        cout << "Unsorted list:" << endl;
+#ifdef  DISPLAY_UNSORTED
+        cout << "Unsorted list (" << wordList.size() << " words) :" << endl;
+
         for (auto word : wordList) {
             cout << "word " << n << " = " << word << endl;
             ++n;
         }
+#endif  // DISPLAY_UNSORTED
+
+        stringBtree binaryTree;
+
+        for (auto word : wordList) {
+            binaryTree.insert(word, nullptr);
+        }
+
+        cout << "insertion complete" << endl;
+
+#ifdef DUMP_TREE
+        binaryTree.dumpOrdered(cout);
+#endif  // DUMP_TREE
+
+#ifdef GET_NODEVEC
+        vector<bNode<string, int>*>      orderVec;
+
+        binaryTree.getOrderedNodeVector(orderVec);
+
+        for (auto node : orderVec) {
+            cout << ">>" << node->Key() << endl;
+        }
+#endif  // GET_NODEVEC
+
+        /* Using C++11 Lambda function here! */
+        binaryTree.forEachNode([](stringBtreeNode pNode) {
+            cout << " " << pNode->Key() << endl;
+        });
     }
+
     /* code */
     return 0;
 }

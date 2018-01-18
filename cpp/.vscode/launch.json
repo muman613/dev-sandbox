@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/sorts/sort1/sort1",
             "args": [
-                "wordlist"
+//                "wordlist"
+                "unsorted-words.txt"
             ],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}/sorts/sort1",
