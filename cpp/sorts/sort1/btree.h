@@ -11,14 +11,23 @@
 
 //#include "sort_types.h"
 
+#include <assert.h>
+#include <functional>
+#include <memory>
+
 template<class K, class V> class bTree;
+
+/**
+ * Template class for the b-tree node.
+ */
 
 template<class K, class V>
     class bNode {
         public:
             bNode(K key, V* value = nullptr) {
                 m_key   = key;
-                m_value = value;
+                //m_value = value;
+                m_value.reset(value);
                 m_left  = m_right = nullptr;
             }
             virtual ~bNode() {
@@ -32,26 +41,42 @@ template<class K, class V>
 
             /* Value accessor */
             V* Value() {
-                return m_value;
+                return m_value.get();
+            }
+
+            void Value(V* set) {
+                m_value.reset(set);
             }
 
         protected:
             friend class bTree<K,V>;    // Allow the bTree to modify the node.
 
-            K       m_key;
-            V*      m_value = nullptr;
-            bNode*  m_left  = nullptr;
-            bNode*  m_right = nullptr;
+            K                   m_key;
+            std::shared_ptr<V>  m_value;
+            bNode*              m_left  = nullptr;
+            bNode*              m_right = nullptr;
     };
+
+enum class traversalOrder {
+    TRAVERSE_PREORDER,
+    TRAVERSE_INORDER,
+    TRAVERSE_POSTORDER,
+};
+
+/**
+ * Template class for the binary tree.
+ */
 
 template<class K, class V>
     class bTree {
         public:
 
-            typedef bNode<K,V>* pNodePtr;
-            typedef void (*functionPtr)(pNodePtr);
+            using bNodePtr      = bNode<K,V>*;
+            using functionPtr   = std::function<void (bNodePtr)>;
 
-            bTree() {}
+            bTree() {
+                // ctor
+            }
             virtual ~bTree() {
                 deleteAllNodes();
             }
@@ -61,42 +86,61 @@ template<class K, class V>
                 return;
             }
 
-            void dumpOrdered(std::ostream& os) {
-                os << "Ordered list:" << std::endl;
+            /**
+             * print each key value to the output stream.
+             */
+            void dumpOrdered(std::ostream& os, traversalOrder order = traversalOrder::TRAVERSE_INORDER) {
                 if (m_rootNode != nullptr) {
-                    traverseTree(m_rootNode, os);
+                    forEachNode([&](bNodePtr pNode) {
+                        os << pNode->m_key << std::endl;
+                    }, order);
                 }
             }
 
-            void getOrderedNodeVector(std::vector<bNode<K,V>*>& nodeVec) {
+            void getOrderedNodeVector(std::vector<bNodePtr>& nodeVec, traversalOrder order = traversalOrder::TRAVERSE_INORDER) {
                 nodeVec.clear();
 
                 if (m_rootNode != nullptr) {
-                    traverseTree(m_rootNode, nodeVec);
+                    forEachNode([&](bNodePtr pNode) {
+                        nodeVec.push_back(pNode);
+                    }, order);
                 }
 
                 return;
             }
 
-            void forEachNode(functionPtr cb) {
+            /**
+             * Traverse through b-tree using pre-order, in-order, or post-order traversal.
+             */
+            void forEachNode(functionPtr cb, traversalOrder order = traversalOrder::TRAVERSE_INORDER) {
                 if (m_rootNode != nullptr) {
-                    forEachNode(m_rootNode, cb);
+                    switch (order) {
+                    case traversalOrder::TRAVERSE_INORDER:
+                        forEachNodeInOrder(m_rootNode, cb);
+                        break;
+                    case traversalOrder::TRAVERSE_POSTORDER:
+                        forEachNodePostOrder(m_rootNode, cb);
+                        break;
+                    case traversalOrder::TRAVERSE_PREORDER:
+                        forEachNodePreOrder(m_rootNode, cb);
+                        break;
+                    }
                 }
             }
 
             /* Free all dynamically allocated nodes... */
             void deleteAllNodes() {
                 if (m_rootNode != nullptr) {
-                    forEachNode([](bTree<K,V>::pNodePtr pNode) {
+                    forEachNode([](bTree<K,V>::bNodePtr pNode) {
                         delete pNode;
-                    });
+                    }, traversalOrder::TRAVERSE_POSTORDER);
 
                     m_rootNode = nullptr;
                 }
             }
 
         protected:
-            void insert(bNode<K,V>* pNode, K key, V* value) {
+            void insert(bNodePtr pNode, K key, V* value) {
                 if (pNode == nullptr) {
                     // std::cout << "allocating root node!" << std::endl;
                     m_rootNode = new bNode<K,V>(key, value);
@@ -117,46 +161,34 @@ template<class K, class V>
                 }
             }
 
-            void traverseTree(bNode<K,V>* pNode, std::ostream& os) {
-                if (pNode->m_left == nullptr) {
-                    std::cout << "-- [" << pNode->m_key << "]" << std::endl;
-                    if (pNode->m_right != nullptr)
-                        traverseTree(pNode->m_right, os);
-                } else {
-                    traverseTree(pNode->m_left, os);
-                    std::cout << "-- [" << pNode->m_key << "]" << std::endl;
-                    if (pNode->m_right != nullptr)
-                        traverseTree(pNode->m_right, os);
-                }
+            void forEachNodeInOrder(bNodePtr pNode, functionPtr cb) {
+                assert(pNode != nullptr);
+                if (pNode->m_left != nullptr)
+                    forEachNodeInOrder(pNode->m_left, cb);
+                cb(pNode);
+                if (pNode->m_right != nullptr)
+                    forEachNodeInOrder(pNode->m_right, cb);
             }
 
-            void traverseTree(bNode<K,V>* pNode, std::vector<bNode<K,V>*>& nodeVec) {
-                if (pNode->m_left == nullptr) {
-                    nodeVec.push_back(pNode);
-                    if (pNode->m_right != nullptr)
-                        traverseTree(pNode->m_right, nodeVec);
-                } else {
-                    traverseTree(pNode->m_left, nodeVec);
-                    nodeVec.push_back(pNode);
-                    if (pNode->m_right != nullptr)
-                        traverseTree(pNode->m_right, nodeVec);
-                }
+            void forEachNodePreOrder(bNodePtr pNode, functionPtr cb) {
+                assert(pNode != nullptr);
+                cb(pNode);
+                if (pNode->m_left != nullptr)
+                    forEachNodePreOrder(pNode->m_left, cb);
+                if (pNode->m_right != nullptr)
+                    forEachNodePreOrder(pNode->m_right, cb);
             }
 
-            void forEachNode(bNode<K,V>* pNode, functionPtr cb) {
-                if (pNode->m_left == nullptr) {
-                    (*cb)(pNode);
-                    if (pNode->m_right != nullptr)
-                        forEachNode(pNode->m_right, cb);
-                } else {
-                    forEachNode(pNode->m_left, cb);
-                    (*cb)(pNode);
-                    if (pNode->m_right != nullptr)
-                        forEachNode(pNode->m_right, cb);
-                }
+            void forEachNodePostOrder(bNodePtr pNode, functionPtr cb) {
+                assert(pNode != nullptr);
+                if (pNode->m_left != nullptr)
+                    forEachNodePostOrder(pNode->m_left, cb);
+                if (pNode->m_right != nullptr)
+                    forEachNodePostOrder(pNode->m_right, cb);
+                cb(pNode);
             }
 
-            bNode<K, V>*  m_rootNode = nullptr;
+            bNodePtr  m_rootNode = nullptr;
     };
 
 #endif /* BTREE_H */

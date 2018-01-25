@@ -5,8 +5,10 @@
  * @date            January 17, 2018
  */
 
-//#define DUMP_TREE         1       // enable to dump tree to console...
+//#define DUMP_TREE           1       // enable to dump tree to console...
 //#define DISPLAY_UNSORTED  1       // Display the unsorted list...
+//#define GET_NODEVEC         1
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,7 +20,7 @@
 using namespace std;
 
 using stringBtree       = bTree<string, int>;
-using stringBtreeNode   = stringBtree::pNodePtr;
+using stringBtreeNode   = stringBtree::bNodePtr;
 
 /**
  *
@@ -57,23 +59,31 @@ int main(int argc, char const *argv[]) {
         cout << "insertion complete" << endl;
 
 #ifdef DUMP_TREE
-        binaryTree.dumpOrdered(cout);
+        ofstream ofs;
+
+        ofs.open("/tmp/sortedlist.txt");
+        if (ofs.is_open()) {
+            binaryTree.dumpOrdered(ofs);
+            ofs.close();
+        }
 #endif  // DUMP_TREE
 
 #ifdef GET_NODEVEC
-        vector<bNode<string, int>*>      orderVec;
+        vector<stringBtreeNode>      orderVec;
 
-        binaryTree.getOrderedNodeVector(orderVec);
+        binaryTree.getOrderedNodeVector(orderVec /* , traversalOrder::TRAVERSE_INORDER */);
 
         for (auto node : orderVec) {
             cout << ">>" << node->Key() << endl;
         }
 #endif  // GET_NODEVEC
 
+        int fooManchu = 1;
+
         /* Using C++11 Lambda function here! */
-        binaryTree.forEachNode([](stringBtreeNode pNode) {
-            cout << " " << pNode->Key() << endl;
-        });
+        binaryTree.forEachNode([&](stringBtreeNode pNode) {
+            cout << " record " << fooManchu++ << " : " << pNode->Key() << endl;
+        }, traversalOrder::TRAVERSE_INORDER);
     }
 
     /* code */
