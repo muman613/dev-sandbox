@@ -2,6 +2,7 @@
  * @module  :   probeApp.ts
  * @author  :   Michael. A. Uman
  * @date    :   September 12, 2017
+ * @date    :   April 11, 2020
  */
 
 const fs = require('fs-web');
@@ -40,6 +41,12 @@ export class probeApp {
     private panes : Array<Pane>;
     private bgColor : string;
 
+    private lastX : number;
+    private lastY : number;
+
+    private lastTop : number;
+    private paneCount : number;
+
     constructor(c : HTMLCanvasElement) {
         console.log("probeApp()");
 
@@ -52,16 +59,23 @@ export class probeApp {
         this.paneNo         = -1;
         this.panes          = new Array();
 
+        this.lastX          = 20;
+        this.lastY          = 20;
+
+        this.lastTop        = 0;
+        this.paneCount      = 0;
+
         this.initEvents();
         this.resizeCanvas();
 
-        this.loadPanes();
+        // this.loadPanes();
     }
 
     private initEvents() : void {
         console.log("initEvents()");
 
         window.addEventListener("load", () => {
+            console.log("load")
             this.resizeCanvas()
         });
         window.addEventListener("resize", () => {
@@ -87,6 +101,10 @@ export class probeApp {
             this.onKeyDown(e);
         });
 
+        // this.canvasElement.addEventListener("focus", (e: FocusEvent) => {
+        //     console.log("Focus");
+        // });
+
         setInterval( () => {
             this.onTimer();
         }, 500);
@@ -98,7 +116,8 @@ export class probeApp {
     }
 
     addPane(pane: Pane) : void {
-        this.panes.push(pane);
+        this.panes.unshift(pane);
+        // this.panes.push(pane);
         if (this.panes.length > 0) {
             this.panesLoaded = true;
         }
@@ -112,16 +131,28 @@ export class probeApp {
                 window.close();
                 break;
             case 78:
+                let paneTitle = ''.concat('Test Panel #' + (this.paneCount + 1).toString());
                 let newPane : Pane = {
-                    x: 20,
-                    y: 20,
+                    x: this.lastX,
+                    y: this.lastY,
                     w: 200,
                     h: 200,
-                    title: "Test panel",
+                    title: paneTitle,
                     color: "blue",
                     content: []
                 };
                 this.addPane( newPane );
+
+                //this.paneToTop( this.panes.length - 1);
+
+                this.paneCount += 1;
+
+                this.lastX = this.lastX + 10;
+                this.lastY = this.lastY + 10;
+
+                // console.log(this.lastX);
+                // console.log(this.lastY);
+
                 break;
             default:
                 console.log(e);
@@ -140,8 +171,10 @@ export class probeApp {
     private drawTimestamp() {
         let ts = new Date().toLocaleTimeString();
         this.ctx.fillStyle  = "black";
-        this.ctx.font       = "10pt mono";
-        this.ctx.fillText(ts, 2, 12);
+        this.ctx.font       = "18pt Helvectica";
+
+        let xOff = (this.ctx.canvas.width - this.ctx.measureText(ts).width) / 2;
+        this.ctx.fillText(ts, xOff, 18);
     }
 
     private resizeCanvas() : void {
@@ -272,7 +305,7 @@ export class probeApp {
     }
 
     private loadPanes() {
-        fs.readFile(__dirname + "/panes.json", 'utf8', (err : any, data : string) => {
+        fs.readFile('data', 'utf8', (err : any, data : string) => {
             if (err) {
                 console.log("ERROR : " + err);
                 return;
